@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 
 from .cache import cached
+from .config import SEED, SUBSAMPLE_FLOOR, SUBSAMPLE_SIZE, VAL_FRAC
 from .paths import DATA_DIR
 
 STRATA = ["lang", "domain", "label"]
@@ -12,7 +13,7 @@ def _read_meta() -> pd.DataFrame:
     return pd.read_csv(DATA_DIR / "train.csv", usecols=STRATA)
 
 
-def get_split(val_frac: float = 0.1, seed: int = 42) -> dict:
+def get_split(val_frac: float = VAL_FRAC, seed: int = SEED) -> dict:
     """Row positions in train.csv: {"train": ..., "val": ...}.
 
     Stratified by language, domain and label, so every cell is represented in both parts.
@@ -29,7 +30,7 @@ def get_split(val_frac: float = 0.1, seed: int = 42) -> dict:
     return cached("split", make, key=key)
 
 
-def get_subsample(n: int = 50_000, floor: int = 2_000, seed: int = 42) -> np.ndarray:
+def get_subsample(n: int = SUBSAMPLE_SIZE, floor: int = SUBSAMPLE_FLOOR, seed: int = SEED) -> np.ndarray:
     """Row positions in train.csv of a fixed training subsample, taken from the train part only.
 
     Cells (language, domain, label) with fewer than `floor` train texts are kept in full;

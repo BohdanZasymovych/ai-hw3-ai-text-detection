@@ -4,7 +4,7 @@ import pandas as pd
 from sklearn.metrics import confusion_matrix, f1_score, precision_recall_fscore_support
 
 from .paths import ARTIFACTS_DIR, ensure_dirs
-from .plots import LABEL_ORDER
+from .config import LABEL_ORDER
 
 
 def macro_f1(y_true, y_pred) -> float:

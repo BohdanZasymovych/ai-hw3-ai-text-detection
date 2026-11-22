@@ -1,8 +1,7 @@
 """Shared plotting helpers with fixed label order and colors."""
 import pandas as pd
 
-LABEL_ORDER = ["human", "ai", "fusion"]
-LABEL_COLORS = {"human": "#4C78A8", "ai": "#E45756", "fusion": "#F2A93B"}
+from .config import LABEL_COLORS, LABEL_ORDER
 
 
 def plot_label_share(df: pd.DataFrame, by: str, ax) -> None:
