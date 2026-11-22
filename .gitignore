@@ -41,3 +41,6 @@ kaggle.json
 .vscode/
 .idea/
 .DS_Store
+
+# Cached results of long steps (see utils/cache.py)
+artifacts/
