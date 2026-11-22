@@ -50,9 +50,9 @@ DATA_DIR = Path(os.environ.get("HW3_DATA_DIR") or _default_data())
 ARTIFACTS_DIR = Path(os.environ.get("HW3_ARTIFACTS_DIR") or _default_artifacts())
 
 # Read-only fallbacks: artifacts from earlier Kaggle runs attached as datasets/inputs.
+# The mount depth of an input differs (/kaggle/input/<slug>/ or /kaggle/input/datasets/<owner>/<slug>/), so search a few levels.
 EXTRA_ARTIFACT_DIRS = (
-    [p for p in Path("/kaggle/input").glob("*/artifacts") if p.is_dir()]
-    + [p for p in Path("/kaggle/input").glob("*/*/artifacts") if p.is_dir()]
+    sorted({p for depth in range(1, 5) for p in Path("/kaggle/input").glob("*/" * depth + "artifacts") if p.is_dir()})
     if ENV == "kaggle"
     else []
 )
