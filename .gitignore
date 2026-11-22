@@ -1,0 +1,43 @@
+# AI context
+ai-context/
+.claude/
+
+# Data (train/test CSVs, submissions)
+data/
+*.csv
+*.parquet
+
+# Models & checkpoints
+models/
+checkpoints/
+outputs/
+runs/
+wandb/
+*.pt
+*.pth
+*.bin
+*.safetensors
+*.ckpt
+*.joblib
+*.pkl
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+*.egg-info/
+.python-version
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Env / secrets
+.env
+kaggle.json
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
