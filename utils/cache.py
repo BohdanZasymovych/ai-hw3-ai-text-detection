@@ -69,6 +69,15 @@ def artifact_path(name: str, kind: str = "pickle") -> Path:
     return ARTIFACTS_DIR / f"{name}{_EXT[kind]}"
 
 
+def find_artifact(name: str, kind: str = "pickle") -> Path | None:
+    """Path of a result saved by another notebook (locally or in an attached Kaggle input), or None."""
+    for base in (ARTIFACTS_DIR, *EXTRA_ARTIFACT_DIRS):
+        path = base / f"{name}{_EXT[kind]}"
+        if path.exists():
+            return path
+    return None
+
+
 def artifact_dir(name: str, key: dict) -> Path:
     """Directory for things with their own format (HF checkpoints). Reuses an existing
     copy (also from attached Kaggle inputs) only if its saved key matches `key`;
