@@ -34,11 +34,14 @@ def submit_to_kaggle(path, message: str) -> dict:
 
     Locally uses ~/.kaggle credentials; on Kaggle, the KAGGLE_USERNAME and KAGGLE_KEY notebook secrets.
     """
-    env = dict(os.environ)
     if ENV == "kaggle":
         from kaggle_secrets import UserSecretsClient
         secrets = UserSecretsClient()
-        env.update({name: secrets.get_secret(name) for name in ("KAGGLE_USERNAME", "KAGGLE_KEY")})
-    subprocess.run([sys.executable, "-m", "kaggle", "competitions", "submit", "-c", COMPETITION,
-                    "-f", str(path), "-m", message], check=True, env=env)
+        os.environ.update({name: secrets.get_secret(name) for name in ("KAGGLE_USERNAME", "KAGGLE_KEY")})
+    # Python API, not `python -m kaggle`: the kaggle version preinstalled on Kaggle has no __main__.
+    # Imported here because importing kaggle authenticates, which needs the credentials set above.
+    from kaggle.api.kaggle_api_extended import KaggleApi
+    api = KaggleApi()
+    api.authenticate()
+    api.competition_submit(str(path), message, COMPETITION)
     return {"file": str(path), "message": message}
