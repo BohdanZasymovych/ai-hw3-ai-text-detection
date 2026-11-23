@@ -17,5 +17,5 @@ PPL_MODEL = "Qwen/Qwen2.5-0.5B"  # open causal LM used only to score texts (perp
 MODEL_COLORS = {
     "baseline": "#9D9D9D", "baseline 100k": "#5E5E5E",
     "encoder": "#4C78A8", "encoder chunked": "#72B7B2", "encoder large": "#1F3B73",
-    "stacker": "#B279A2", "stacker windows": "#54A24B", "stacker + perplexity": "#E45756", "perplexity only": "#F2A93B",
+    "stacker": "#B279A2", "final stacker": "#9D755D", "stacker windows": "#54A24B", "stacker + perplexity": "#E45756", "perplexity only": "#F2A93B",
 }
