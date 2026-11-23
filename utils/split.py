@@ -30,11 +30,13 @@ def get_split(val_frac: float = VAL_FRAC, seed: int = SEED) -> dict:
     return cached("split", make, key=key)
 
 
-def get_subsample(n: int = SUBSAMPLE_SIZE, floor: int = SUBSAMPLE_FLOOR, seed: int = SEED) -> np.ndarray:
+def get_subsample(n: int = SUBSAMPLE_SIZE, floor: int = SUBSAMPLE_FLOOR, seed: int = SEED,
+                  name: str = "subsample") -> np.ndarray:
     """Row positions in train.csv of a fixed training subsample, taken from the train part only.
 
     Cells (language, domain, label) with fewer than `floor` train texts are kept in full;
-    the rest of the `n` texts is a random sample of the other cells.
+    the rest of the `n` texts is a random sample of the other cells. Give another `n` its own `name`,
+    so the fixed comparison subsample is not overwritten.
     """
     split = get_split()
 
@@ -46,4 +48,4 @@ def get_subsample(n: int = SUBSAMPLE_SIZE, floor: int = SUBSAMPLE_FLOOR, seed: i
         return np.sort(pd.concat([rare, rest]).index.to_numpy())
 
     key = {"n": n, "floor": floor, "seed": seed, "n_val": len(split["val"]), "v": 1}
-    return cached("subsample", make, key=key, kind="npy")
+    return cached(name, make, key=key, kind="npy")

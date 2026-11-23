@@ -70,11 +70,21 @@ def artifact_path(name: str, kind: str = "pickle") -> Path:
 
 
 def find_artifact(name: str, kind: str = "pickle") -> Path | None:
-    """Path of a result saved by another notebook (locally or in an attached Kaggle input), or None."""
+    """Path of a result saved by another notebook (locally or in an attached Kaggle input), or None.
+    kind="dir" finds a non-empty directory, e.g. a saved model."""
     for base in (ARTIFACTS_DIR, *EXTRA_ARTIFACT_DIRS):
-        path = base / f"{name}{_EXT[kind]}"
-        if path.exists():
+        path = base / name if kind == "dir" else base / f"{name}{_EXT[kind]}"
+        if path.exists() and (kind != "dir" or any(path.iterdir())):
             return path
+    return None
+
+
+def load_key(name: str) -> dict | None:
+    """The key a result of another notebook was saved with (its settings), or None if not found."""
+    for base in (ARTIFACTS_DIR, *EXTRA_ARTIFACT_DIRS):
+        path = _key_path(base, name)
+        if path.exists():
+            return json.loads(path.read_text())
     return None
 
 

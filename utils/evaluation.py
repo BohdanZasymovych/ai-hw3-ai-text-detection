@@ -63,3 +63,23 @@ def write_submission(ids, labels, sample_submission: pd.DataFrame, name: str):
     path = ARTIFACTS_DIR / f"submission_{name}.csv"
     submission.to_csv(path, index=False)
     return path
+
+
+LENGTH_BANDS = {"≤510": 510, "510–1k": 1000, "1k–2k": 2000, ">2k": np.inf}  # encoder tokens per text
+
+
+def length_band(n_tokens) -> pd.Categorical:
+    """Length band of each text from its token count; the first band fits the encoder without truncation."""
+    return pd.cut(np.asarray(n_tokens), [0, *LENGTH_BANDS.values()], labels=list(LENGTH_BANDS))
+
+
+def compare_f1(y_true, preds: dict) -> pd.DataFrame:
+    """F1 per class and macro-F1 (rows) for each model's predictions (columns)."""
+    return pd.DataFrame({name: class_report(y_true, pred)["f1"] for name, pred in preds.items()})
+
+
+def compare_groups(meta: pd.DataFrame, preds: dict, by) -> pd.DataFrame:
+    """Macro-F1 per group of `meta` (needs a `label` column) for each model, plus the number of texts `n`."""
+    table = pd.DataFrame({name: group_f1(meta, pred, by)["macro_f1"] for name, pred in preds.items()})
+    table["n"] = meta.groupby(by, observed=True).size()
+    return table
