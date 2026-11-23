@@ -38,7 +38,7 @@ def plot_confusion(y_true, y_pred, ax) -> None:
 def group_f1(meta: pd.DataFrame, y_pred, by) -> pd.DataFrame:
     """Macro-F1 and number of texts for each group of `meta` (needs a `label` column)."""
     df = meta.assign(pred=np.asarray(y_pred))
-    rows = {key: {"macro_f1": macro_f1(g["label"], g["pred"]), "n": len(g)} for key, g in df.groupby(by)}
+    rows = {key: {"macro_f1": macro_f1(g["label"], g["pred"]), "n": len(g)} for key, g in df.groupby(by, observed=True)}
     return pd.DataFrame.from_dict(rows, orient="index")
 
 
