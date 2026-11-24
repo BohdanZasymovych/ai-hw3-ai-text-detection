@@ -59,6 +59,8 @@ The final model (XGBoost stacker on the best combination) is the best of all on 
 
 Clone the [repo](https://github.com/BohdanZasymovych/ai-hw3-ai-text-detection) and run `python3 reproduce.py`; it saves `submission_final.csv` and `submission_final_logreg.csv` to `artifacts/`.
 
+---
+
 ## **Appendix**
 
 <a id="fig-1"></a>**Figure 1.** Share of each label per domain.
@@ -67,31 +69,11 @@ Clone the [repo](https://github.com/BohdanZasymovych/ai-hw3-ai-text-detection) a
 
 <a id="tab-1"></a>**Table 1.** Share of texts above 512 XLM-R tokens per language, domain and label (random sample of 20000 texts from train).
 
-| lang | domain | human | ai | fusion |
-|---|---|---|---|---|
-| de-DE | bundestag | 83% | 76% | 91% |
-| de-DE | gutenberg | 100% | 84% | 100% |
-| en-EN | arxiv_papers | 100% | 92% | 100% |
-| en-EN | blog_authorship_corpus | 17% | 17% | 13% |
-| en-EN | cnn_news | 86% | 82% | 73% |
-| en-EN | euro_court_cases | 82% | 78% | 80% |
-| en-EN | gutenberg | 80% | 95% | 82% |
-| en-EN | house_of_commons | 67% | 79% | 63% |
-| en-EN | student_essays | 42% | 51% | 38% |
+![Table 1](assets/tables/table1_tokens_above_512.png)
 
 <a id="tab-2"></a>**Table 2.** Number of train texts per language, domain and label (cell sizes).
 
-| lang | domain | human | ai | fusion |
-|---|---|---|---|---|
-| de-DE | bundestag | 14,479 | 19,977 | 17,887 |
-| de-DE | gutenberg | 31 | 360 | 37 |
-| en-EN | arxiv_papers | 407 | 12,050 | 1,833 |
-| en-EN | blog_authorship_corpus | 12,466 | 15,684 | 12,397 |
-| en-EN | cnn_news | 13,395 | 19,488 | 11,402 |
-| en-EN | euro_court_cases | 6,277 | 11,141 | 10,160 |
-| en-EN | gutenberg | 216 | 6,359 | 341 |
-| en-EN | house_of_commons | 6,953 | 15,298 | 9,608 |
-| en-EN | student_essays | 12,506 | 21,583 | 20,017 |
+![Table 2](assets/tables/table2_cell_sizes.png)
 
 <a id="fig-2"></a>**Figure 2.** Cell sizes (language, domain, label) in train, sorted by size on a log axis.
 
@@ -99,23 +81,7 @@ Clone the [repo](https://github.com/BohdanZasymovych/ai-hw3-ai-text-detection) a
 
 <a id="tab-3"></a>**Table 3.** TF-IDF feature sets and classifiers with the $C$ search.
 
-| features | model | C | macro-F1 |
-|---|---|---|---|
-| word+char | LogisticRegression | 3 | 0.870 |
-| word+char | LogisticRegression | 10 | 0.869 |
-| char | LogisticRegression | 3 | 0.863 |
-| char | LogisticRegression | 10 | 0.858 |
-| word+char | LinearSVC | 0.3 | 0.852 |
-| word+char | LinearSVC | 0.1 | 0.850 |
-| char | LinearSVC | 0.3 | 0.850 |
-| word+char | LinearSVC | 1 | 0.848 |
-| char | LinearSVC | 1 | 0.847 |
-| word | LogisticRegression | 3 | 0.847 |
-| word | LogisticRegression | 10 | 0.843 |
-| char | LinearSVC | 0.1 | 0.841 |
-| word | LinearSVC | 0.3 | 0.824 |
-| word | LinearSVC | 0.1 | 0.818 |
-| word | LinearSVC | 1 | 0.817 |
+![Table 3](assets/tables/table3_tfidf_search.png)
 
 <a id="fig-3"></a>**Figure 3.** Confusion matrix of the TF-IDF model.
 
@@ -127,12 +93,7 @@ Clone the [repo](https://github.com/BohdanZasymovych/ai-hw3-ai-text-detection) a
 
 <a id="tab-4"></a>**Table 4.** Metrics of XLM-R base.
 
-| class | precision | recall | f1 | support |
-|---|---|---|---|---|
-| human | 0.889 | 0.820 | 0.853 | 6,675 |
-| ai | 0.987 | 0.996 | 0.991 | 12,194 |
-| fusion | 0.867 | 0.909 | 0.887 | 8,369 |
-| macro avg | 0.914 | 0.908 | 0.911 | 27,238 |
+![Table 4](assets/tables/table4_xlmr_base_metrics.png)
 
 <a id="fig-5"></a>**Figure 5.** Confusion matrix of XLM-R base.
 
@@ -144,12 +105,7 @@ Clone the [repo](https://github.com/BohdanZasymovych/ai-hw3-ai-text-detection) a
 
 <a id="tab-5"></a>**Table 5.** Comparison of XLM-R base and the stackers on chunk predictions.
 
-| class | XLM-R base 50k | XLM-R base 50k, window mean | Stack: XLM-R base | Stack: XLM-R base + windows |
-|---|---|---|---|---|
-| human | 0.853 | 0.612 | 0.868 | 0.902 |
-| ai | 0.991 | 0.988 | 0.992 | 0.993 |
-| fusion | 0.887 | 0.799 | 0.890 | 0.918 |
-| macro avg | 0.911 | 0.800 | 0.917 | 0.938 |
+![Table 5](assets/tables/table5_xlmr_base_and_stackers.png)
 
 <a id="fig-7"></a>**Figure 7.** Confusion matrix of the window-feature stacker.
 
@@ -169,48 +125,17 @@ Clone the [repo](https://github.com/BohdanZasymovych/ai-hw3-ai-text-detection) a
 
 <a id="tab-6"></a>**Table 6.** Comparison of XLM-R large and the TF-IDF model trained on 50k and 100k texts.
 
-| class | TF-IDF 50k | TF-IDF 100k | XLM-R base 50k | XLM-R large 100k |
-|---|---|---|---|---|
-| human | 0.807 | 0.821 | 0.853 | 0.897 |
-| ai | 0.985 | 0.987 | 0.991 | 0.996 |
-| fusion | 0.815 | 0.833 | 0.887 | 0.920 |
-| macro avg | 0.869 | 0.880 | 0.911 | 0.938 |
+![Table 6](assets/tables/table6_large_model_comparison.png)
 
-<a id="tab-7"></a>**Table 7.** Out-of-fold F1 per class and macro-F1 of the logistic regression stacker on every combination of input groups. L: XLM-R large logits, T: TF-IDF 100k class scores, C: window features of XLM-R base, W: window features of XLM-R large, P: perplexity features.
+<a id="tab-7"></a>**Table 7.** Out-of-fold F1 per class and macro-F1 of the logistic regression stacker on every combination of input groups.
 
-| inputs | n features | human | ai | fusion | macro-F1 |
-|---|---|---|---|---|---|
-| L + T + C + W | 38 | 0.9348 | 0.9968 | 0.9482 | 0.9600 |
-| L + T + C + W + P | 43 | 0.9342 | 0.9969 | 0.9478 | 0.9596 |
-| L + C + W | 35 | 0.9331 | 0.9966 | 0.9474 | 0.9590 |
-| L + T + W + P | 27 | 0.9327 | 0.9967 | 0.9473 | 0.9589 |
-| L + C + W + P | 40 | 0.9331 | 0.9965 | 0.9470 | 0.9589 |
-| L + T + W | 22 | 0.9322 | 0.9967 | 0.9467 | 0.9585 |
-| L + T + C + P | 27 | 0.9295 | 0.9968 | 0.9438 | 0.9567 |
-| L + T + C | 22 | 0.9293 | 0.9968 | 0.9436 | 0.9565 |
-| L + W + P | 24 | 0.9280 | 0.9964 | 0.9439 | 0.9561 |
-| L + W | 19 | 0.9271 | 0.9964 | 0.9431 | 0.9555 |
-| L + C | 19 | 0.9254 | 0.9965 | 0.9406 | 0.9542 |
-| L + C + P | 24 | 0.9255 | 0.9965 | 0.9404 | 0.9541 |
-| T + C + W | 35 | 0.9243 | 0.9968 | 0.9398 | 0.9536 |
-| T + C + W + P | 40 | 0.9236 | 0.9968 | 0.9393 | 0.9532 |
-| C + W + P | 37 | 0.9196 | 0.9961 | 0.9366 | 0.9508 |
-| C + W | 32 | 0.9190 | 0.9962 | 0.9362 | 0.9505 |
-| T + W | 19 | 0.9177 | 0.9964 | 0.9351 | 0.9498 |
-| T + W + P | 24 | 0.9176 | 0.9964 | 0.9350 | 0.9497 |
-| L + T + P | 11 | 0.9162 | 0.9966 | 0.9340 | 0.9489 |
-| L + T | 6 | 0.9155 | 0.9965 | 0.9337 | 0.9486 |
-| W | 16 | 0.9088 | 0.9962 | 0.9296 | 0.9449 |
-| W + P | 21 | 0.9089 | 0.9962 | 0.9295 | 0.9448 |
-| L + P | 8 | 0.8993 | 0.9964 | 0.9211 | 0.9389 |
-| L | 3 | 0.8981 | 0.9964 | 0.9206 | 0.9384 |
-| T + C + P | 24 | 0.8974 | 0.9943 | 0.9155 | 0.9357 |
-| T + C | 19 | 0.8966 | 0.9939 | 0.9142 | 0.9349 |
-| C | 16 | 0.8875 | 0.9912 | 0.9049 | 0.9279 |
-| C + P | 21 | 0.8864 | 0.9910 | 0.9040 | 0.9271 |
-| T + P | 8 | 0.8172 | 0.9878 | 0.8367 | 0.8806 |
-| T | 3 | 0.8175 | 0.9869 | 0.8362 | 0.8802 |
-| P | 5 | 0.3054 | 0.7316 | 0.4758 | 0.5043 |
+- **L:** XLM-R large logits
+- **T:** TF-IDF 100k class scores
+- **C:** window features of XLM-R base
+- **W:** window features of XLM-R large
+- **P:** perplexity features
+
+![Table 7](assets/tables/table7_stacker_inputs.png)
 
 <a id="fig-11"></a>**Figure 11.** Confusion matrix of the final model.
 
@@ -218,23 +143,7 @@ Clone the [repo](https://github.com/BohdanZasymovych/ai-hw3-ai-text-detection) a
 
 <a id="tab-8"></a>**Table 8.** F1 per class and macro-F1 on val for all models, and the public leaderboard score where submitted ("-" otherwise). Stackers are scored out-of-fold.
 
-| model | human | ai | fusion | macro-F1 | public LB |
-|---|---|---|---|---|---|
-| TF-IDF 50k | 0.807 | 0.985 | 0.815 | 0.869 | 0.873 |
-| TF-IDF 100k | 0.821 | 0.987 | 0.833 | 0.880 | - |
-| XLM-R base 50k | 0.853 | 0.991 | 0.887 | 0.911 | 0.915 |
-| XLM-R base 50k, window mean | 0.612 | 0.988 | 0.799 | 0.800 | - |
-| Stack: XLM-R base | 0.868 | 0.992 | 0.890 | 0.917 | - |
-| Stack: XLM-R base + windows | 0.902 | 0.993 | 0.918 | 0.938 | - |
-| Stack: perplexity | 0.305 | 0.732 | 0.476 | 0.504 | - |
-| Stack: XLM-R base + perplexity | 0.869 | 0.992 | 0.891 | 0.917 | - |
-| XLM-R large 100k | 0.897 | 0.996 | 0.920 | 0.938 | - |
-| Stack: XLM-R large | 0.898 | 0.996 | 0.921 | 0.938 | - |
-| Stack: XLM-R large + base windows | 0.927 | 0.996 | 0.942 | 0.955 | - |
-| Stack: XLM-R large + large windows | 0.927 | 0.996 | 0.943 | 0.956 | - |
-| Stack: XLM-R large + both windows | 0.934 | 0.997 | 0.948 | 0.959 | - |
-| Final model, logistic regression stacker | 0.9348 | 0.9968 | 0.9482 | 0.9600 | - |
-| Final model, XGBoost stacker | 0.9415 | 0.9963 | 0.9532 | 0.9637 | 0.9632 |
+![Table 8](assets/tables/table8_all_models.png)
 
 ---
 
