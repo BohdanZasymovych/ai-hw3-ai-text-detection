@@ -49,9 +49,9 @@ XLM-R large improved over XLM-R base (0.938 vs 0.911) and confuses human and fus
 
 ### **Final model**
 
-For the final model I used a stacker and tried all combinations of its input features: the logits of XLM-R large, the TF-IDF class scores, the window features of XLM-R base and XLM-R large, and the surprise features. Each combination was scored with a Logistic Regression stacker by 5-fold CV on out-of-fold predictions ([Table 7](#tab-7): macro-F1 of stacker input combinations). The best one uses all except the surprise features. For it, XGBoost beat Logistic Regression as the stacker (0.964 vs 0.960).
+For the final model I used a stacker and tried all combinations of its input features: the logits of XLM-R large, the TF-IDF class scores, the window features of XLM-R base and XLM-R large, and the surprise features. Each combination was scored with a Logistic Regression stacker by 5-fold CV on out-of-fold predictions ([Table 7](#tab-7): macro-F1 of stacker input combinations). The best one uses all except the surprise features. For it, Gradient boosting beat Logistic Regression as the stacker (0.964 vs 0.960).
 
-The final model (XGBoost stacker on the best combination) is the best of all on val and the best of the submitted models on the public leaderboard (0.964 and 0.963). The confusion matrix has 96%, 100% and 94% on the diagonal, with only slight confusion between human and fusion texts ([Figure 11](#fig-11): confusion matrix of the final model). [Table 8](#tab-8) compares all models.
+The final model (gradient boosting stacker on the best combination) is the best of all on val and the best of the submitted models on the public leaderboard (0.964 and 0.963). The confusion matrix has 96%, 100% and 94% on the diagonal, with only slight confusion between human and fusion texts ([Figure 11](#fig-11): confusion matrix of the final model). [Table 8](#tab-8) compares all models.
 
 ---
 
