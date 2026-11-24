@@ -1,7 +1,7 @@
 """Token surprise of texts under an open causal LM (used only to score texts, never trained), and per-text features.
 
 Surprise of token i: s_i = -log p(t_i | t_1..t_{i-1}). Perplexity is exp(mean s_i).
-Not exported from `utils` because it needs torch: `from utils.perplexity import ...`.
+Not exported from `utils` because it needs torch: `from utils.surprise import ...`.
 """
 import numpy as np
 import pandas as pd
