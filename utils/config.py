@@ -15,7 +15,11 @@ PPL_MODEL = "Qwen/Qwen2.5-0.5B"  # open causal LM used only to score texts (perp
 
 # Fixed colours of the models in comparison plots.
 MODEL_COLORS = {
-    "baseline": "#9D9D9D", "baseline 100k": "#5E5E5E",
-    "encoder": "#4C78A8", "encoder chunked": "#72B7B2", "encoder large": "#1F3B73",
-    "stacker": "#B279A2", "final stacker": "#9D755D", "stacker windows": "#54A24B", "stacker + perplexity": "#E45756", "perplexity only": "#F2A93B",
+    "TF-IDF 50k": "#9D9D9D", "TF-IDF 100k": "#5E5E5E",
+    "XLM-R base 50k": "#4C78A8", "XLM-R base 50k, window mean": "#72B7B2", "XLM-R large 100k": "#1F3B73",
+    "Stack: XLM-R base": "#B279A2", "Stack: XLM-R base + windows": "#54A24B",
+    "Stack: XLM-R base + perplexity": "#E45756", "Stack: perplexity": "#F2A93B",
+    "Stack: XLM-R large": "#C8A2C8", "Stack: XLM-R large + base windows": "#8CD17D",
+    "Stack: XLM-R large + large windows": "#59A14F", "Stack: XLM-R large + both windows": "#2E7D32",
+    "Stack: final": "#9D755D",
 }
