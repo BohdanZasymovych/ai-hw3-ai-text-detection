@@ -1,8 +1,8 @@
 ## **Data Analysis**
 
-The dataset contains texts in English and German from different domains, such as arXiv papers, student essays, CNN news, etc. Each text has a label indicating how it was written: by a human, by AI, or by a fusion of both.
+The dataset contains texts in English and German from different domains, such as arXiv papers, student essays, CNN news, etc. Each text is labeled by who wrote it: a human, AI, or a fusion of both.
 
-The classes are slightly unbalanced: AI texts are the most frequent (25% human, 45% AI, 31% fusion). Languages and domains are unbalanced too: DE Bundestag and EN CNN news have many more samples than DE/EN Gutenberg. Their distribution differs between train and test, but the same imbalance is kept.
+The classes are slightly unbalanced: AI texts are the most frequent (24.5% human, 44.8% AI, 30.7% fusion). Languages and domains are unbalanced too: DE Bundestag and EN CNN news have many more samples than DE/EN Gutenberg ([Figure 1](#fig-1): per domain). Their distribution differs between train and test, but the same imbalance is kept.
 
 All domains, languages and classes contain texts longer than 512 XLM-R tokens. For most combinations, the share of such texts (in a random sample of 20000 from train) is >= 75%, which matters for the encoder ([Table 1](#tab-1): share of texts above 512 tokens per domain and label).
 
@@ -14,9 +14,9 @@ I chose 50000 texts for train and ~27000 for val. A plain random subsample of 50
 
 I calculated the TF-IDF score for 1-2 word grams and 3-5 character grams, kept the 200k most frequent of each, and normalized the values. I tried 3 feature sets: character TF-IDF, word TF-IDF, and both together (400k values). As classifiers I tried a linear Support Vector Machine and Logistic Regression, tuning the inverse regularization term $C$ for both.
 
-Logistic Regression was better in general (the top 4 models use it), and so were words and characters together (the top 2 models). The best model is Logistic Regression on both with $C=3$. It scored 0.870 macro-F1 on val and 0.873 on the public leaderboard ([Table 3](#tab-3): TF-IDF feature sets and models with the $C$ search).
+Logistic Regression was better in general (the top 4 models use it), and so were words and characters together (the top 2 models). The best model is Logistic Regression on both with $C=3$. It scored 0.869 macro-F1 on val and 0.873 on the public leaderboard ([Table 3](#tab-3): TF-IDF feature sets and models with the $C$ search).
 
-The model is almost perfect on AI texts (99% precision, ~1% missed) but confuses human and fusion texts ([Figure 3](#fig-3): confusion matrix of the TF-IDF model).
+The model is almost perfect on AI texts (98% precision, ~1% missed) but confuses human and fusion texts ([Figure 3](#fig-3): confusion matrix of the TF-IDF model).
 
 ---
 
@@ -24,7 +24,7 @@ The model is almost perfect on AI texts (99% precision, ~1% missed) but confuses
 
 I chose the pretrained xlm-roberta-base (XLM-R base) as the encoder. To handle long texts I used the first 128 tokens and the last 382 (+ 2 special tokens), as suggested by Sun et al. [[1](#ref-1)]. I trained for 2 epochs with a learning rate of $2 \cdot 10^{-5}$ ([Figure 4](#fig-4): XLM-R base training curves).
 
-XLM-R base got 0.911 macro-F1 on val and 0.915 on the public leaderboard (0.870/0.873 for the TF-IDF model). Like the TF-IDF model, it handles AI texts perfectly but confuses human and fusion texts, though less ([Table 4](#tab-4): XLM-R base metrics, [Figure 5](#fig-5): confusion matrix of XLM-R base).
+XLM-R base got 0.911 macro-F1 on val and 0.915 on the public leaderboard (0.869/0.873 for the TF-IDF model). Like the TF-IDF model, it handles AI texts perfectly but confuses human and fusion texts, though less overall (F1 0.853 and 0.887 vs 0.807 and 0.815) ([Table 4](#tab-4): XLM-R base metrics, [Figure 5](#fig-5): confusion matrix of XLM-R base).
 
 ---
 
@@ -34,11 +34,11 @@ XLM-R base got 0.911 macro-F1 on val and 0.915 on the public leaderboard (0.870/
 
 The main issue of the encoder is that it does not see the middle of the text. XLM-R base scores worse on long texts (> 2000 tokens) than on shorter ones (510-1000): macro-F1 0.781 against 0.936 ([Figure 6](#fig-6): macro-F1 of XLM-R base by text length).
 
-To handle this I split each text into at most 8 chunks and predicted 3 logits for each. To combine them, I took the mean of the logits or probabilities, or replaced the mean of the fusion logit by its max; all worsened macro-F1 by ~0.01 compared to XLM-R base without chunking. Instead, I used the predictions for all chunks as input to a stacker model (Logistic Regression), which gave a great improvement: 0.911 (XLM-R base) vs 0.917 (logit stacker) vs 0.938 (window-feature stacker) ([Table 5](#tab-5): XLM-R base and stacker comparison, [Figure 7](#fig-7): confusion matrix of the window-feature stacker).
+To handle this I split each text into at most 8 chunks and predicted 3 logits for each. To combine them, I took the mean of the logits or probabilities, or replaced the mean of the fusion logit by its max; all worsened macro-F1 by 0.11-0.15 compared to XLM-R base without chunking. Instead, I used the predictions for all chunks as input to a stacker model (Logistic Regression), which gave a great improvement: 0.911 (XLM-R base) vs 0.917 (logit stacker, without chunks) vs 0.938 (window-feature stacker) ([Table 5](#tab-5): XLM-R base and stacker comparison, [Figure 7](#fig-7): confusion matrix of the window-feature stacker).
 
-### **Perplexity**
+### **Surprise**
 
-Another experiment used an open-weight LM (Qwen2.5-0.5B). The surprise of a token is its negative log-probability $s_i = -\log p_\theta(t_i \mid t_{<i})$, averaged over 128-token chunks. The idea is that AI-generated text is easier to predict, so the model is less "surprised". [Figure 8](#fig-8) (mean surprise per chunk for 3 random texts) confirms this: the AI text is clearly less surprising. From the chunk surprises I built 5 features for the stacker: mean, std, spread, min and max. They did not help: the stacker on probabilities scored 0.917, the same as with them added, and on surprise features alone it was much worse (0.504).
+Another experiment used an open-weight LM (Qwen2.5-0.5B). The surprise of a token is its negative log-probability $s_i = -\log p(t_i \mid t_{<i})$, averaged over 128-token chunks. The idea is that AI-generated text is easier to predict, so the model is less "surprised". [Figure 8](#fig-8) (mean surprise per chunk for one news text per class) confirms this: the AI text is clearly less surprising. From the chunk surprises I built 5 features for the stacker: mean, std, spread, min and max. They did not help: the stacker on XLM-R base logits scored 0.917, the same as with them added, and on surprise features alone it was much worse (0.504).
 
 ### **Larger model, more data and more epochs**
 
@@ -49,15 +49,15 @@ XLM-R large improved over XLM-R base (0.938 vs 0.911) and confuses human and fus
 
 ### **Final model**
 
-For the final model I used a stacker and tried all combinations of its input features: the logits of XLM-R large, the TF-IDF class scores, the window features of XLM-R base and XLM-R large, and the surprise features. Each combination was scored with a Logistic Regression stacker by 5-fold CV on out-of-fold predictions ([Table 7](#tab-7): macro-F1 of stacker input combinations). For the best combination, XGBoost beat Logistic Regression as the stacker (0.964 vs 0.960).
+For the final model I used a stacker and tried all combinations of its input features: the logits of XLM-R large, the TF-IDF class scores, the window features of XLM-R base and XLM-R large, and the surprise features. Each combination was scored with a Logistic Regression stacker by 5-fold CV on out-of-fold predictions ([Table 7](#tab-7): macro-F1 of stacker input combinations). The best one uses all except the surprise features. For it, XGBoost beat Logistic Regression as the stacker (0.964 vs 0.960).
 
-The final model (XGBoost stacker on the best combination) is the best of all on both val and the public leaderboard (0.964 and 0.963). The confusion matrix has 96%, 100% and 94% on the diagonal, with only slight confusion between human and fusion texts ([Figure 11](#fig-11): confusion matrix of the final model). [Table 8](#tab-8) compares all models.
+The final model (XGBoost stacker on the best combination) is the best of all on val and the best of the submitted models on the public leaderboard (0.964 and 0.963). The confusion matrix has 96%, 100% and 94% on the diagonal, with only slight confusion between human and fusion texts ([Figure 11](#fig-11): confusion matrix of the final model). [Table 8](#tab-8) compares all models.
 
 ---
 
 ## **Reproducing results**
 
-Clone the [repo](https://github.com/BohdanZasymovych/ai-hw3-ai-text-detection) and run `python3 reproduce.py`; it saves `submission_final.csv` and `submission_final_logreg.csv` to `artifacts/`.
+Clone the [repo](https://github.com/BohdanZasymovych/ai-hw3-ai-text-detection) and run `python3 reproduce.py`; it saves `submission_final.csv` and `submission_final_logreg.csv` to `artifacts/` (two models selected on the kaggle).
 
 ---
 
@@ -111,7 +111,7 @@ Clone the [repo](https://github.com/BohdanZasymovych/ai-hw3-ai-text-detection) a
 
 ![Figure 7](assets/figures/figure7_confusion_window_stacker.png)
 
-<a id="fig-8"></a>**Figure 8.** Mean surprise per 128-token chunk for 3 randomly sampled texts.
+<a id="fig-8"></a>**Figure 8.** Mean surprise per 128-token chunk for one news text of each class.
 
 ![Figure 8](assets/figures/figure8_token_surprise.png)
 
@@ -133,7 +133,7 @@ Clone the [repo](https://github.com/BohdanZasymovych/ai-hw3-ai-text-detection) a
 - **T:** TF-IDF 100k class scores
 - **C:** window features of XLM-R base
 - **W:** window features of XLM-R large
-- **P:** perplexity features
+- **P:** surprise features
 
 ![Table 7](assets/tables/table7_stacker_inputs.png)
 
